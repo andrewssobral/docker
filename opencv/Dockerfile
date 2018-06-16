@@ -1,4 +1,4 @@
-# IMAGE: andrewssobral/opencv:base
+# IMAGE: docker build . -t andrewssobral/opencv:base
 FROM ubuntu:16.04
 
 WORKDIR /root
@@ -46,5 +46,8 @@ RUN apt-get update && apt-get install -y \
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 RUN python3 get-pip.py
 RUN python2 get-pip.py
+
+RUN pip install numpy virtualenv
+RUN pip3 install numpy virtualenv
 
 WORKDIR /root
