@@ -1,0 +1,74 @@
+# IMAGE: andrewssobral/opencv:3.4.1
+# IMAGE: andrewssobral/opencv:3.4.1_contrib
+# IMAGE: andrewssobral/opencv:3.4.1_cuda
+# IMAGE: andrewssobral/opencv:3.4.1_cuda_contrib
+FROM andrewssobral/opencv:base
+
+ENV OPENCV_VERSION=3.4.1
+ENV CMAKE_INSTALL_PREFIX=/usr/local
+ENV DOWNLOAD_OPENCV_EXTRAS=No
+ENV DOWNLOAD_OPENCV_CONTRIB=No
+ENV OPENCV_SOURCE_DIR=/root
+
+WORKDIR $OPENCV_SOURCE_DIR
+RUN git clone https://github.com/opencv/opencv.git
+RUN cd opencv && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
+# For 3.4.1, if CUDA is enabled, use this commit to fix samples/gpu/CMakeLists.txt
+#RUN if [ $OPENCV_VERSION = 3.4.1 ] ; then git merge ec0bb66e5e176ffe267948a98508ac6721daf8ad ; fi
+
+WORKDIR $OPENCV_SOURCE_DIR
+RUN if [ $DOWNLOAD_OPENCV_EXTRAS == "YES" ] ; then echo "Installing opencv_extras" && git clone https://github.com/opencv/opencv_extra.git && cd opencv_extra && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION} ; fi
+
+WORKDIR $OPENCV_SOURCE_DIR
+RUN if [ $DOWNLOAD_OPENCV_CONTRIB == "YES" ] ; then echo "Installing opencv_contrib" && git clone https://github.com/opencv/opencv_contrib.git && cd opencv_contrib && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION} ; fi
+
+RUN cd $OPENCV_SOURCE_DIR/opencv && mkdir build
+WORKDIR $OPENCV_SOURCE_DIR/opencv/build
+
+# if CUDA is enabled:
+#   -D WITH_CUDA=ON \
+#   -D ENABLE_FAST_MATH=ON \
+#   -D CUDA_FAST_MATH=ON \
+#
+# if DOWNLOAD_OPENCV_EXTRAS is enabled:
+#   -D OPENCV_TEST_DATA_PATH=${OPENCV_SOURCE_DIR}/opencv_extra/testdata \
+#
+# if DOWNLOAD_OPENCV_CONTRIB is enabled:
+#   -D OPENCV_EXTRA_MODULES_PATH=${OPENCV_SOURCE_DIR}/opencv_contrib/modules \
+#
+# if using specific python:
+#   -D PYTHON_EXECUTABLE=$(which python3) \
+#   -D PYTHON_DEFAULT_EXECUTABLE=$(which python3) \
+#   -D PYTHON_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+#   -D PYTHON_LIBRARY=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR')+'/'+sysconfig.get_config_var('LDLIBRARY'))") \
+#   -D PYTHON3_EXECUTABLE=$(which python3) \
+#   -D PYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+#   -D PYTHON3_INCLUDE_PATH=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+#   -D PYTHON3_LIBRARIES=$(python3 -c "import sysconfig; print(sysconfig.get_config_var('LIBDIR')+'/'+sysconfig.get_config_var('LDLIBRARY'))") \
+#   -D PYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
+RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
+      -D CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} \
+      -D WITH_CUBLAS=ON \
+      -D WITH_LIBV4L=ON \
+      -D WITH_GSTREAMER=ON \
+      -D WITH_GSTREAMER_0_10=OFF \
+      -D WITH_QT=ON \
+      -D WITH_OPENGL=ON \
+      -D WITH_JAVA=OFF \
+      -D ENABLE_CXX11=ON \
+      -D WITH_IPP=ON \
+      -D WITH_TBB=ON \
+      -D ENABLE_AVX=OFF \
+      -D BUILD_TESTS=OFF \
+      -D INSTALL_TESTS=OFF \
+      -D BUILD_PERF_TESTS=OFF \
+      -D BUILD_EXAMPLES=OFF \
+      -D INSTALL_C_EXAMPLES=OFF \
+      -D INSTALL_PYTHON_EXAMPLES=OFF \
+      ../
+
+RUN make -j $(nproc) && \
+    make install && \
+    ldconfig
+
+WORKDIR /root

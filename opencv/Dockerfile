@@ -1,5 +1,7 @@
-# IMAGE: opencv_base, opencv_base:ubuntu_16.04
+# IMAGE: andrewssobral/opencv:base
 FROM ubuntu:16.04
+
+WORKDIR /root
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -41,7 +43,6 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install pip
-RUN cd $HOME
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 RUN python3 get-pip.py
 RUN python2 get-pip.py
