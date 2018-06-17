@@ -1,11 +1,11 @@
-# IMAGE: docker build . -t andrewssobral/opencv:3.4.1
-# IMAGE: docker build . -t andrewssobral/opencv:3.4.1_cuda
+# IMAGE: docker build . -t andrewssobral/opencv:3.4.1_contrib
+# IMAGE: docker build . -t andrewssobral/opencv:3.4.1_cuda_contrib
 FROM andrewssobral/opencv:base
 
 ENV OPENCV_VERSION=3.4.1
 ENV CMAKE_INSTALL_PREFIX=/usr/local
 ENV DOWNLOAD_OPENCV_EXTRAS=NO
-ENV DOWNLOAD_OPENCV_CONTRIB=NO
+ENV DOWNLOAD_OPENCV_CONTRIB=YES
 ENV OPENCV_SOURCE_DIR=/root
 
 WORKDIR $OPENCV_SOURCE_DIR
@@ -65,6 +65,7 @@ RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
       -D BUILD_EXAMPLES=OFF \
       -D INSTALL_C_EXAMPLES=OFF \
       -D INSTALL_PYTHON_EXAMPLES=OFF \
+      -D OPENCV_EXTRA_MODULES_PATH=${OPENCV_SOURCE_DIR}/opencv_contrib/modules \
       ../
 
 RUN make -j $(nproc) && \
