@@ -1,6 +1,6 @@
-# IMAGE: docker build . -t andrewssobral/opencv:3.4.1_contrib
-# IMAGE: docker build . -t andrewssobral/opencv:3.4.1_cuda_contrib
-FROM andrewssobral/opencv:base
+# IMAGE: docker build . -t andrewssobral/opencv:3.4.1py36_contrib
+# IMAGE: docker build . -t andrewssobral/opencv:3.4.1py36_cuda_contrib
+FROM andrewssobral/opencv:base_py36
 
 ENV OPENCV_VERSION=3.4.1
 ENV CMAKE_INSTALL_PREFIX=/usr/local
@@ -74,13 +74,7 @@ RUN make -j $(nproc) && \
     make install && \
     ldconfig
 
-# For info:
-# -- Installing: /usr/local/lib/python2.7/dist-packages/cv2.so
-# -- Set runtime path of "/usr/local/lib/python2.7/dist-packages/cv2.so" to "/usr/local/lib"
-# -- Installing: /usr/local/lib/python3.5/dist-packages/cv2.cpython-35m-x86_64-linux-gnu.so
-# -- Set runtime path of "/usr/local/lib/python3.5/dist-packages/cv2.cpython-35m-x86_64-linux-gnu.so" to "/usr/local/lib"
-
-#RUN rm -rf $OPENCV_SOURCE_DIR/opencv
-#RUN rm -rf $OPENCV_SOURCE_DIR/opencv_contrib
+RUN rm -rf $OPENCV_SOURCE_DIR/opencv
+RUN rm -rf $OPENCV_SOURCE_DIR/opencv_contrib
 
 WORKDIR /root

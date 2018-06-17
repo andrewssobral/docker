@@ -1,11 +1,11 @@
-# IMAGE: docker build . -t andrewssobral/opencv:3.4.1_contrib
-# IMAGE: docker build . -t andrewssobral/opencv:3.4.1_cuda_contrib
-FROM andrewssobral/opencv:base
+# IMAGE: docker build . -t andrewssobral/opencv:3.4.1py36
+# IMAGE: docker build . -t andrewssobral/opencv:3.4.1py36_cuda
+FROM andrewssobral/opencv:base_py36
 
 ENV OPENCV_VERSION=3.4.1
 ENV CMAKE_INSTALL_PREFIX=/usr/local
 ENV DOWNLOAD_OPENCV_EXTRAS=NO
-ENV DOWNLOAD_OPENCV_CONTRIB=YES
+ENV DOWNLOAD_OPENCV_CONTRIB=NO
 ENV OPENCV_SOURCE_DIR=/root
 
 WORKDIR $OPENCV_SOURCE_DIR
@@ -18,9 +18,9 @@ RUN cd opencv && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 #RUN git clone https://github.com/opencv/opencv_extra.git
 #RUN cd opencv_extra && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 
-WORKDIR $OPENCV_SOURCE_DIR
-RUN git clone https://github.com/opencv/opencv_contrib.git
-RUN cd opencv_contrib && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
+#WORKDIR $OPENCV_SOURCE_DIR
+#RUN git clone https://github.com/opencv/opencv_contrib.git
+#RUN cd opencv_contrib && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 
 RUN cd $OPENCV_SOURCE_DIR/opencv && mkdir build
 WORKDIR $OPENCV_SOURCE_DIR/opencv/build
@@ -67,20 +67,12 @@ RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
       -D BUILD_EXAMPLES=OFF \
       -D INSTALL_C_EXAMPLES=OFF \
       -D INSTALL_PYTHON_EXAMPLES=OFF \
-      -D OPENCV_EXTRA_MODULES_PATH=${OPENCV_SOURCE_DIR}/opencv_contrib/modules \
       ../
 
 RUN make -j $(nproc) && \
     make install && \
     ldconfig
 
-# For info:
-# -- Installing: /usr/local/lib/python2.7/dist-packages/cv2.so
-# -- Set runtime path of "/usr/local/lib/python2.7/dist-packages/cv2.so" to "/usr/local/lib"
-# -- Installing: /usr/local/lib/python3.5/dist-packages/cv2.cpython-35m-x86_64-linux-gnu.so
-# -- Set runtime path of "/usr/local/lib/python3.5/dist-packages/cv2.cpython-35m-x86_64-linux-gnu.so" to "/usr/local/lib"
-
-#RUN rm -rf $OPENCV_SOURCE_DIR/opencv
-#RUN rm -rf $OPENCV_SOURCE_DIR/opencv_contrib
+RUN rm -rf $OPENCV_SOURCE_DIR/opencv
 
 WORKDIR /root
