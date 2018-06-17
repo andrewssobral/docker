@@ -12,13 +12,15 @@ WORKDIR $OPENCV_SOURCE_DIR
 RUN git clone https://github.com/opencv/opencv.git
 RUN cd opencv && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 # For 3.4.1, if CUDA is enabled, use this commit to fix samples/gpu/CMakeLists.txt
-#RUN if [ $OPENCV_VERSION = 3.4.1 ] ; then git merge ec0bb66e5e176ffe267948a98508ac6721daf8ad ; fi
+#RUN git merge ec0bb66e5e176ffe267948a98508ac6721daf8ad
 
-WORKDIR $OPENCV_SOURCE_DIR
-RUN if [ $DOWNLOAD_OPENCV_EXTRAS == "YES" ] ; then echo "Installing opencv_extras" && git clone https://github.com/opencv/opencv_extra.git && cd opencv_extra && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION} ; fi
+#WORKDIR $OPENCV_SOURCE_DIR
+#RUN git clone https://github.com/opencv/opencv_extra.git
+#RUN cd opencv_extra && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 
-WORKDIR $OPENCV_SOURCE_DIR
-RUN if [ $DOWNLOAD_OPENCV_CONTRIB == "YES" ] ; then echo "Installing opencv_contrib" && git clone https://github.com/opencv/opencv_contrib.git && cd opencv_contrib && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION} ; fi
+#WORKDIR $OPENCV_SOURCE_DIR
+#RUN git clone https://github.com/opencv/opencv_contrib.git
+#RUN cd opencv_contrib && git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 
 RUN cd $OPENCV_SOURCE_DIR/opencv && mkdir build
 WORKDIR $OPENCV_SOURCE_DIR/opencv/build
