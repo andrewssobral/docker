@@ -2,7 +2,19 @@ FROM python:3.6
 
 WORKDIR /root
 
+RUN apt-get update && apt-get install -y openjdk-8-jdk
+
+RUN apt-get install ca-certificates-java && update-ca-certificates -f
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+
+RUN export JAVA_HOME
+
+RUN apt-get clean
+
 RUN pip install jupyter -U && pip install jupyterlab
+
+RUN pip install py4j
 
 RUN pip install proactive --upgrade
 
