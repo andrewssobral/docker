@@ -1,4 +1,4 @@
-# docker build . -t andrewssobral/opencv4:4.5.0
+# docker build . -t andrewssobral/opencv4:4.6.0
 FROM andrewssobral/opencv4:base
 
 WORKDIR /tmp
