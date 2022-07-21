@@ -52,6 +52,8 @@ RUN make install
 
 RUN sh -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
 RUN ldconfig
+ENV PYTHONPATH=$PYTHONPATH:/usr/lib/python3.8/site-packages/cv2/python-3.8
+WORKDIR /opt
 
 RUN apt-get autoclean && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
