@@ -1,8 +1,11 @@
-# docker build . -t andrewssobral/bgslibrary:opencv_4.6.0py38
+# docker build --build-arg INCUBATOR_VER=$(date +%Y%m%d-%H%M%S) -t andrewssobral/bgslibrary:opencv_4.6.0py38 .
 # docker run -it --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY andrewssobral/bgslibrary:opencv_4.6.0py38 bash
 FROM andrewssobral/opencv4:4.6.0
 
 WORKDIR /opt
+
+# Changing INCUBATOR_VER will break the cache here
+ARG INCUBATOR_VER=unknown
 
 RUN git clone --recursive https://github.com/andrewssobral/bgslibrary.git
 ENV BGSLIBRARY_HOME=$PWD/bgslibrary
