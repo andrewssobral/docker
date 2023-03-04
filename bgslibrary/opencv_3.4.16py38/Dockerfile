@@ -13,6 +13,7 @@ ENV BGSLIBRARY_HOME=$PWD/bgslibrary
 # Compile C++ library
 WORKDIR /opt/bgslibrary/build
 RUN cmake .. && make -j4 && make install
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
 # Build and install the python wrapper
 WORKDIR /opt/bgslibrary
