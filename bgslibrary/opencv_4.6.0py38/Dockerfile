@@ -5,6 +5,7 @@ FROM andrewssobral/opencv4:4.6.0
 WORKDIR /opt
 
 RUN git clone --recursive https://github.com/andrewssobral/bgslibrary.git
+ENV BGSLIBRARY_HOME=$PWD/bgslibrary
 
 # Compile C++ library
 WORKDIR /opt/bgslibrary/build
